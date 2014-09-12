@@ -1,3 +1,4 @@
+#encoding: utf-8
 require "socket"
 
 if Gem::Platform.local.os == "darwin"
@@ -9,12 +10,8 @@ else
 end
 
 def net_status
-  if File.exist?(CurrentPath)
-    File.open CurrentPath do |f| 
-      return f.read
-    end
-  else
-    return "文件不存在"
+  File.open CurrentPath do |f| 
+    return f.read
   end
 end
 
@@ -23,32 +20,38 @@ server = TCPServer.new port
 client = server.accept
 
 loop do
-  client_ip = client.addr[3]
+  client_ip = client.peeraddr[3]
   if client_ip =~ /192.168.\d{1,2}.100/ 
     num = client_ip.split(".")[2]
   else
     num = 0
   end
-  command = client.gets.chomp.strip
+  command = client.gets.chomp
   if command == "net"
-    if net_status.include?("net")
+    cstatus = net_status.chomp.strip
+    if cstatus.include?("net") and cstatus!="net"+num.to_s
       fpath = command_path+"/allnet"
     else
       fpath = command_path+"/net"+num.to_s
     end
     %x(#{fpath}) if File.exist?(fpath)
-    client.puts $?==0 ? "ok" : "error"
+    client.puts $?==0 ? "net_ok" : "school_error"
+    client.flush
+    puts command
   elsif command == "school"
     fpath = command_path+"/school"
     %x(#{fpath}) if File.exist?(fpath)
-    client.puts $?==0 ? "ok" : "error"
+    client.puts $?==0 ? "school_ok" : "school_error"
+    client.flush
+    puts command
   elsif command == "current"
-    client.puts net_status
+    client.puts net_status.chomp.strip	
+    client.flush
+    puts "current status is "+net_status
+    puts command
   elsif command == "close"
     puts "#{client_ip} closed"
     client.close
     client = server.accept
-  else
-    client.puts command
   end
 end
