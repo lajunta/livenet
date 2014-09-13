@@ -26,7 +26,7 @@ loop do
   else
     num = 0
   end
-  command = client.gets.chomp
+  command = client.gets.chomp.strip
   if command == "net"
     cstatus = net_status.chomp.strip
     if cstatus.include?("net") and cstatus!="net"+num.to_s
@@ -35,7 +35,7 @@ loop do
       fpath = command_path+"/net"+num.to_s
     end
     %x(#{fpath}) if File.exist?(fpath)
-    client.puts $?==0 ? "net_ok" : "school_error"
+    client.puts $?==0 ? "net_ok" : "net_error"
     client.flush
     puts command
   elsif command == "school"
