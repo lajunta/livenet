@@ -30,7 +30,7 @@ loop do
       command = client.gets.chomp.strip
       cstatus = net_status.chomp.strip
       if command == "net"
-        if cstatus.include?("net") and cstatus!="net"+num.to_s
+        if cstatus.include?("net") 
           fpath = command_path+"/allnet"
         else
           fpath = command_path+"/net"+num.to_s
