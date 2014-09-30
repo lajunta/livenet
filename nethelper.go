@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net"
@@ -57,15 +56,14 @@ func fexist(path string) bool {
 }
 
 func main() {
-	p := fmt.Println
 	server, err := net.Listen("tcp", Saddr)
 	if err != nil {
-		p("Server Starting failed")
+		println("Server Starting failed")
 	}
 	for {
 		conn, err := server.Accept()
 		if err != nil {
-			p("Server Accepting failed")
+			println("Server Accepting failed")
 			continue
 		}
 		go handleConnection(conn)
@@ -77,7 +75,6 @@ func handleConnection(conn net.Conn) {
 	logfile, _ := os.OpenFile(home()+"/nethelper.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	defer logfile.Close()
 	log.SetOutput(logfile)
-	p := fmt.Println
 	defer conn.Close()
 	client_ip := conn.RemoteAddr().String()
 	log.Println(" - " + client_ip + " connected. ")
@@ -94,7 +91,7 @@ func handleConnection(conn net.Conn) {
 	for {
 		n, err := conn.Read(buf[0:])
 		if err != nil {
-			p("Client connection error:", err)
+			println("Client connection error:", err)
 			conn.Close()
 			return
 		}
@@ -113,7 +110,7 @@ func handleConnection(conn net.Conn) {
 				cmd := exec.Command("sh", "-c", fpath)
 				err := cmd.Start()
 				if err != nil {
-					p(fpath + " File not existed")
+					println(fpath + " File not existed")
 				}
 				conn.Write([]byte("net_ok\n"))
 				log.Println(" - " + client_ip + " open the net.")
@@ -130,7 +127,7 @@ func handleConnection(conn net.Conn) {
 				cmd := exec.Command("sh", "-c", fpath)
 				err := cmd.Start()
 				if err != nil {
-					p(fpath + " File not existed")
+					println(fpath + " File not existed")
 				}
 				conn.Write([]byte("school_ok\n"))
 			} else {
