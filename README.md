@@ -1,4 +1,4 @@
 livenet
 =======
 
-livecode control computer room
+Control computer room net surfing with ruby socket server
